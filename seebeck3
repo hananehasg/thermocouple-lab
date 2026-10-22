@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import linregress
+
+
+temperature_C = np.array([
+    28, 30, 32, 36, 38, 40, 42, 44, 46, 48, 50,
+    52, 54, 56, 58, 60, 62, 64, 66, 68, 70
+], dtype=float)
+
+voltage_mV = np.array([
+    0.11, 0.18, 0.30, 0.38, 0.40, 0.56, 0.60,
+    0.75, 0.78, 0.84, 0.92, 0.93, 1.04, 1.08,
+    1.19, 1.25, 1.35, 1.41, 1.49, 1.51, 1.56
+], dtype=float)
+
+
+temperature_K = temperature_C + 273.15
+
+
+result = linregress(temperature_K, voltage_mV)
+
+S = result.slope
+intercept = result.intercept
+r_squared = result.rvalue**2
+
+
+voltage_fit = S * temperature_K + intercept
+
+
+print(f"Seebeck coefficient: {S * 1000:.3f} miuV/K")
+print(f"Slope: {S:.6f} mV/K")
+print(f"Intercept: {intercept:.6f} mV")
+print(f"R-squared: {r_squared:.6f}")
+print(f"Linear fit: V = {S:.6f} T + ({intercept:.6f})")
+
+
+plt.figure(figsize=(8, 5.5))
+
+plt.scatter(
+    temperature_K,
+    voltage_mV,
+    color="blue",
+    marker="o",
+    s=45,
+    label="Experimental data"
+)
+
+plt.plot(
+    temperature_K,
+    voltage_fit,
+    color="red",
+    linewidth=2,
+    label="Linear regression"
+)
+
+plt.xlabel("Temperature (K)")
+plt.ylabel("Voltage (mV)")
+plt.title("Thermocouple 3: Voltage vs Temperature")
+plt.legend()
+plt.grid(True, linestyle="--", alpha=0.5)
+plt.tight_layout()
+plt.show()
